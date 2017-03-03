@@ -9,6 +9,7 @@ var crypto = require('crypto');
 var logger = require('winston');
 var imgur = require('imgur');
 var os = require('os');
+var csv = require('ya-csv');
 
 if (config.uploadToImgur) {
     imgur.setClientId(config.imgurClientId);
@@ -232,6 +233,7 @@ exports.parseMsg = function(msg, myUser, tg, callback) {
     }
 
     var prefix = '';
+   // var username = exports.getName(msg.from, config);
     if (!config.soloUse) {
         prefix = '<' + exports.getName(msg.from, config) + '> ';
     }
@@ -337,12 +339,17 @@ exports.parseMsg = function(msg, myUser, tg, callback) {
                 });
             });
         } else {
-            exports.serveFile(photo.file_id, config, tg, function(url) {
+          exports.serveFile(photo.file_id, config, tg, function(url) {
                 callback({
                     channel: channel,
                     text: prefix + '(Photo, ' + photo.width + 'x' + photo.height + ') ' +
                     url + (msg.caption ? ' ' + msg.caption : '')
                 });
+
+            var csvPath = path.join(osHomedir(), '.teleirc', 'files')
+            var w = csv.createCsvFileWriter(csvPath + '/files.csv',  {'flags': 'a', 'quote': ''});
+
+            w.writeRecord([msg.from.first_name + ' ' + msg.from.last_name, msg.caption, url]);
             });
         }
     } else if (msg.new_chat_photo) {

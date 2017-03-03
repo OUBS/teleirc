@@ -33,6 +33,7 @@
     "os-homedir": "^1.0.1",
     "string.prototype.startswith": "^0.2.0",
     "winston": "^2.2.0",
+    "ya-csv": "^0.10.1",
     "yargs": "^4.7.0"
   },
   "devDependencies": {
