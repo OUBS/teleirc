@@ -321,6 +321,9 @@ exports.parseMsg = function(msg, myUser, tg, callback) {
             });
         });
     } else if (msg.document) {
+        var csvPath = path.join(osHomedir(), '.teleirc', 'files')
+        var w = csv.createCsvFileWriter(csvPath + '/photos.csv',  {'flags': 'a', 'quote': ''});
+        w.writeRecord([msg.from.first_name + ' ' + msg.from.last_name, msg.caption, url]);
         exports.serveFile(msg.document.file_id, config, tg, function(url) {
             callback({
                 channel: channel,
@@ -340,16 +343,14 @@ exports.parseMsg = function(msg, myUser, tg, callback) {
             });
         } else {
           exports.serveFile(photo.file_id, config, tg, function(url) {
+            var csvPath = path.join(osHomedir(), '.teleirc', 'files')
+            var w = csv.createCsvFileWriter(csvPath + '/photos.csv',  {'flags': 'a', 'quote': ''});
+            w.writeRecord([msg.from.first_name + ' ' + msg.from.last_name, msg.caption, url]);
                 callback({
                     channel: channel,
                     text: prefix + '(Photo, ' + photo.width + 'x' + photo.height + ') ' +
                     url + (msg.caption ? ' ' + msg.caption : '')
                 });
-
-            var csvPath = path.join(osHomedir(), '.teleirc', 'files')
-            var w = csv.createCsvFileWriter(csvPath + '/files.csv',  {'flags': 'a', 'quote': ''});
-
-            w.writeRecord([msg.from.first_name + ' ' + msg.from.last_name, msg.caption, url]);
             });
         }
     } else if (msg.new_chat_photo) {
@@ -364,6 +365,10 @@ exports.parseMsg = function(msg, myUser, tg, callback) {
                 });});
         } else {
             exports.serveFile(chatPhoto.file_id, config, tg, function(url) {
+              var csvPath = path.join(osHomedir(), '.teleirc', 'files')
+              var w = csv.createCsvFileWriter(csvPath + '/photos.csv',  {'flags': 'a', 'quote': ''});
+              w.writeRecord([msg.from.first_name + ' ' + msg.from.last_name, msg.caption, url]);
+
                 callback({
                     channel: channel,
                     text: prefix + '(New chat photo, ' +
@@ -373,6 +378,10 @@ exports.parseMsg = function(msg, myUser, tg, callback) {
         }
     } else if (msg.sticker) {
         exports.serveFile(msg.sticker.file_id, config, tg, function(url) {
+          var csvPath = path.join(osHomedir(), '.teleirc', 'files')
+          var w = csv.createCsvFileWriter(csvPath + '/stickers.csv',  {'flags': 'a', 'quote': ''});
+          w.writeRecord([msg.from.first_name + ' ' + msg.from.last_name, msg.caption, url]);
+
             callback({
                 channel: channel,
                 text: prefix + '(Sticker, ' +
@@ -389,6 +398,10 @@ exports.parseMsg = function(msg, myUser, tg, callback) {
         });
     } else if (msg.voice) {
         exports.serveFile(msg.voice.file_id, config, tg, function(url) {
+          var csvPath = path.join(osHomedir(), '.teleirc', 'files')
+          var w = csv.createCsvFileWriter(csvPath + '/voices.csv',  {'flags': 'a', 'quote': ''});
+          w.writeRecord([msg.from.first_name + ' ' + msg.from.last_name, msg.caption, url]);
+
             callback({
                 channel: channel,
                 text: prefix + '(Voice, ' + msg.voice.duration + 's) ' + url
@@ -420,6 +433,9 @@ exports.parseMsg = function(msg, myUser, tg, callback) {
                 ' was removed by: ' + exports.getName(msg.from, config)
         });
     } else if (msg.text) {
+      var csvPath = path.join(osHomedir(), '.teleirc', 'files')
+      var w = csv.createCsvFileWriter(csvPath + '/messages.csv',  {'flags': 'a', 'quote': ''});
+      w.writeRecord([msg.from.first_name + ' ' + msg.from.last_name, msg.text]);
         callback({
             channel: channel,
             text: prefix + msg.text
